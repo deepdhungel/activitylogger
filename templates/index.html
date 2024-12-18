@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Logger</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* General Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background: #f5f5f5;
+    color: #333;
+}
+
+h1, h2 {
+    color: #333;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+input, select, button {
+    margin-bottom: 20px;
+    padding: 12px;
+    width: 100%;
+    max-width: 450px;
+    box-sizing: border-box;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus, button:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+input, select {
+    background: #fff;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+}
+
+/* Container */
+.container {
+    max-width: 1000px;
+    margin: 30px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+    font-size: 16px;
+}
+
+table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+/* Styling for the new username input field */
+#new-username {
+    display: none; /* Hidden by default */
+}
+
+/* Chart Styling */
+#top-users-chart {
+    margin-top: 40px;
+    text-align: center;
+}
+
+#weekly-summary {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-top: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#winner-info, #loser-info {
+    font-size: 18px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    input, select, button {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    h1, h2 {
+        font-size: 24px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="page-title">Babbal Activities Competition</h1>
+
+        <!-- Language Selection Dropdown -->
+        <div class="form-container">
+            <label for="language">Language:</label>
+            <select id="language" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="ne">Nepali</option>
+            </select><br><br>
+
+            <!-- Form to log activity -->
+            <form action="/log_activity" method="POST">
+                <!-- Date Input -->
+                <label for="entry_date" id="date-label">Date:</label>
+                <input type="date" id="entry_date" name="entry_date" required><br><br>
+
+                <!-- Username Input (Dropdown or New Input) -->
+                <label for="username" id="username-label">Username:</label>
+                <select id="username" name="username" onchange="toggleNewUsernameField()">
+                    <option value="" disabled selected>Select Username (or enter new)</option>
+                    {% for username in usernames %}
+                        <option value="{{ username }}">{{ username }}</option>
+                    {% endfor %}
+                </select><br><br>
+                <input type="text" id="new-username" name="new-username" placeholder="Enter new username"><br><br>
+
+                <!-- Activity Dropdown -->
+                <label for="activity" id="activity-label">Activity:</label>
+                <select id="activity" name="activity" required>
+                    <option value="" disabled selected>Select Activity</option>
+                    {% for activity in activities %}
+                        <option value="{{ activity }}">{{ activity }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <!-- Minutes Input -->
+                <label for="entered_minutes" id="minutes-label">Minutes:</label>
+                <input type="number" id="entered_minutes" name="entered_minutes" min="1" required><br><br>
+
+                <button type="submit" id="log-btn">Log Activity</button>
+            </form>
+        </div>
+
+        <!-- Display success or error messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Chart and Table Section -->
+        <div id="top-users-chart">
+            <h2 id="chart-title">Steps Progression</h2>
+            <button onclick="loadTopUsers()">Show Top Users</button>
+            <canvas id="top-users-chart-container" width="400" height="200"></canvas>
+        </div>
+
+        <!-- Winner and Loser Table -->
+        <div id="top-users-table">
+            <h2 id="daily-performers-title">Top Daily Performers</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Winner (Max Steps)</th>
+                        <th>Steps</th>
+                        <th>Loser (Min Steps)</th>
+                        <th>Steps</th>
+                    </tr>
+                </thead>
+                <tbody id="winners-losers-data">
+                    <!-- Data will be injected dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="weekly-summary">
+            <h2 id="weekly-summary-title">Weekly Summary</h2>
+            <div id="winner-info">
+                <strong>Winner:</strong> <span id="winner-name"></span> - <span id="winner-steps"></span> steps
+            </div>
+            <div id="loser-info">
+                <strong>Loser:</strong> <span id="loser-name"></span> - <span id="loser-steps"></span> steps
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const languageData = {
+            en: {
+                "page-title": "Babbal Activity Competition",
+                "date-label": "Date:",
+                "username-label": "Username:",
+                "activity-label": "Activity:",
+                "minutes-label": "Minutes:",
+                "log-btn": "Log Activity",
+                "chart-title": "Steps Progression Per User",
+                "daily-performers-title": "Top Daily Performers",
+                "weekly-summary-title": "Weekly Summary",
+            },
+           ne: {
+    "page-title": "बबाल क्रियाकलाप पाटी (तपाईंको धमाल लग गर्नुहोस्)",
+    "date-label": "धमाका मिति:",
+    "username-label": "हाम्रो सुपरहीरोको नाम:",
+    "activity-label": "धमाल गतिविधि:",
+    "minutes-label": "मजाका मिनेटहरू:",
+    "log-btn": "धमाल लग गर्नुहोस्!",
+    "chart-title": "सुपरहीरोको कदम प्रगति",
+    "daily-performers-title": "आजका धमाल महारथीहरू",
+    "weekly-summary-title": "हप्ताको धमाका सारांश",
+}
+
+        };
+
+        function changeLanguage() {
+            const language = document.getElementById('language').value;
+            const labels = languageData[language];
+
+            document.getElementById('page-title').innerText = labels['page-title'];
+            document.getElementById('date-label').innerText = labels['date-label'];
+            document.getElementById('username-label').innerText = labels['username-label'];
+            document.getElementById('activity-label').innerText = labels['activity-label'];
+            document.getElementById('minutes-label').innerText = labels['minutes-label'];
+            document.getElementById('log-btn').innerText = labels['log-btn'];
+            document.getElementById('chart-title').innerText = labels['chart-title'];
+            document.getElementById('daily-performers-title').innerText = labels['daily-performers-title'];
+            document.getElementById('weekly-summary-title').innerText = labels['weekly-summary-title'];
+        }
+
+        // Function to toggle visibility of the new username input field
+        function toggleNewUsernameField() {
+            var usernameSelect = document.getElementById('username');
+            var newUsernameInput = document.getElementById('new-username');
+            
+            // Show the new username input if no username is selected
+            if (usernameSelect.value === "") {
+                newUsernameInput.style.display = "block";
+            } else {
+                newUsernameInput.style.display = "none";
+            }
+        }
+
+        // Initial check to see if the new username field should be shown when the page loads
+        window.onload = function() {
+            toggleNewUsernameField();
+        };
+
+        async function loadTopUsers() {
+            try {
+                const response = await fetch('/top_users');
+                const data = await response.json();
+
+                const dates = data.dates;
+                const usernames = data.usernames;
+                const stepsData = data.steps_data;
+
+                const ctx = document.getElementById('top-users-chart-container').getContext('2d');
+                if (window.topUsersChart) {
+                    window.topUsersChart.destroy();
+                }
+
+                window.topUsersChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: usernames.map((username, index) => ({
+                            label: username,
+                            data: stepsData[index],
+                            borderColor: `hsl(${index * 30}, 70%, 50%)`,
+                            fill: false
+                        }))
+                    },
+                    options: {
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+
+                const tbody = document.getElementById('winners-losers-data');
+                tbody.innerHTML = "";
+
+                for (const date of dates) {
+                    const stepsPerUser = usernames.map((u, i) => ({ username: u, steps: stepsData[i][dates.indexOf(date)] }));
+                    const winner = stepsPerUser.reduce((max, curr) => (curr.steps > max.steps ? curr : max), stepsPerUser[0]);
+                    const loser = stepsPerUser.reduce((min, curr) => (curr.steps < min.steps ? curr : min), stepsPerUser[0]);
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${date}</td>
+                            <td>${winner.username}</td>
+                            <td>${winner.steps}</td>
+                            <td>${loser.username}</td>
+                            <td>${loser.steps}</td>
+                        </tr>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading top users:', error);
+            }
+        }
+        
+        async function loadWeeklySummary() {
+            try {
+                const response = await fetch('/weekly_summary');
+                const data = await response.json();
+
+                const winnerInfo = document.getElementById('winner-info');
+                const loserInfo = document.getElementById('loser-info');
+
+                if (data.winner) {
+                    document.getElementById('winner-name').innerText = data.winner.username;
+                    document.getElementById('winner-steps').innerText = data.winner.steps;
+                } else {
+                    winnerInfo.innerHTML = '<strong>Winner:</strong> No data available';
+                }
+
+                if (data.loser) {
+                    document.getElementById('loser-name').innerText = data.loser.username;
+                    document.getElementById('loser-steps').innerText = data.loser.steps;
+                } else {
+                    loserInfo.innerHTML = '<strong>Loser:</strong> No data available';
+                }
+            } catch (error) {
+                console.error('Error loading weekly summary:', error);
+            }
+        }
+
+        // Load weekly summary when the page is ready
+        window.onload = function() {
+            toggleNewUsernameField();
+            loadWeeklySummary();
+            loadTopUsers();
+        };
+    </script>
+</body>
+</html>
