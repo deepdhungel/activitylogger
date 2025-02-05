@@ -263,14 +263,21 @@
 </div>
 
     <div id="weekly-summary">
-        <h2 id="weekly-summary-title">Weekly Summary</h2>
-        <div id="winner-info">
-            <strong>Winner:</strong> <span id="winner-name"></span> - <span id="winner-steps"></span> steps
-        </div>
-        <div id="loser-info">
-            <strong>Loser:</strong> <span id="loser-name"></span> - <span id="loser-steps"></span> steps
-        </div>
+    <h2 id="weekly-summary-title">Weekly Summary</h2>
+    <div id="winner-info">
+        <span class="summary-label">Winner:</span> <span id="winner-name"></span> - <span id="winner-steps"></span> steps
     </div>
+    <div id="loser-info">
+        <span class="summary-label">Loser:</span> <span id="loser-name"></span> - <span id="loser-steps"></span> steps
+    </div>
+</div>
+
+<style>
+    .summary-label {
+        color: #007BFF; /* Blue color for labels */
+        font-size: 16px; /* Adjust font size if needed */
+    }
+</style>
 </div>
 
     <script>
