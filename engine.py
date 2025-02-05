@@ -196,7 +196,7 @@ def weekly_summary():
         print(f"Error fetching weekly summary: {e}")
         return jsonify({'error': 'Error fetching weekly summary'}), 500
 
-    
+ 
 
 # Run the application
 if __name__ == '__main__':

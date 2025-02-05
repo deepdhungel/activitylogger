@@ -7,153 +7,145 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* General Styles */
-body {
-    font-family: 'Roboto', sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    background: #f5f5f5;
-    color: #333;
-}
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            color: #333;
+        }
 
-h1, h2 {
-    color: #333;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 20px;
-}
+        h1, h2 {
+            color: #333;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
-}
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
 
-input, select, button {
-    margin-bottom: 20px;
-    padding: 12px;
-    width: 100%;
-    max-width: 450px;
-    box-sizing: border-box;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 2px solid #ddd;
-    transition: all 0.3s ease;
-}
+        input, select, button {
+            margin-bottom: 20px;
+            padding: 12px;
+            width: 100%;
+            max-width: 450px;
+            box-sizing: border-box;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
+        }
 
-input:focus, select:focus, button:focus {
-    outline: none;
-    border-color: #007bff;
-}
+        input:focus, select:focus, button:focus {
+            outline: none;
+            border-color: #007bff;
+        }
 
-input, select {
-    background: #fff;
-}
+        input, select {
+            background: #fff;
+        }
 
-button {
-    background-color: #007BFF;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
-}
+        button {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        }
 
-button:hover {
-    background-color: #0056b3;
-    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
-}
+        button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+        }
 
-/* Container */
-.container {
-    max-width: 1000px;
-    margin: 30px auto;
-    background-color: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-.form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-/* Table Styles */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 30px;
-}
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
 
-table th, table td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: center;
-    font-size: 16px;
-}
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
 
-table th {
-    background-color: #f4f4f4;
-    font-weight: bold;
-}
+        table th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
 
-/* Styling for the new username input field */
-#new-username {
-    display: none; /* Hidden by default */
-}
+        /* Styling for the new username input field */
+        #new-username {
+            display: none; /* Hidden by default */
+        }
 
-/* Chart Styling */
-#top-users-chart {
-    margin-top: 40px;
-    text-align: center;
-}
+        /* Chart Styling */
+        #top-users-chart {
+            margin-top: 40px;
+            text-align: center;
+        }
 
-#weekly-summary {
-    background-color: #f9f9f9;
-    padding: 15px;
-    margin-top: 40px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+        #weekly-summary {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-top: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-#winner-info, #loser-info {
-    font-size: 18px;
-    margin-top: 10px;
-    font-weight: bold;
-}
+        #winner-info, #loser-info {
+            font-size: 18px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
 
-/* Responsiveness */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
 
-    input, select, button {
-        width: 100%;
-        max-width: 100%;
-    }
+            input, select, button {
+                width: 100%;
+                max-width: 100%;
+            }
 
-    h1, h2 {
-        font-size: 24px;
-    }
-}
-
+            h1, h2 {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 id="page-title">Babbal Activities Competition</h1>
 
-        <!-- Language Selection Dropdown -->
-        <div class="form-container">
-            <label for="language">Language:</label>
-            <select id="language" onchange="changeLanguage()">
-                <option value="en">English</option>
-                <option value="ne">Nepali</option>
-            </select><br><br>
 
             <!-- Form to log activity -->
             <form action="/log_activity" method="POST">
@@ -248,19 +240,7 @@ table th {
                 "chart-title": "Steps Progression Per User",
                 "daily-performers-title": "Top Daily Performers",
                 "weekly-summary-title": "Weekly Summary",
-            },
-           ne: {
-    "page-title": "बबाल क्रियाकलाप पाटी (तपाईंको धमाल लग गर्नुहोस्)",
-    "date-label": "धमाका मिति:",
-    "username-label": "हाम्रो सुपरहीरोको नाम:",
-    "activity-label": "धमाल गतिविधि:",
-    "minutes-label": "मजाका मिनेटहरू:",
-    "log-btn": "धमाल लग गर्नुहोस्!",
-    "chart-title": "सुपरहीरोको कदम प्रगति",
-    "daily-performers-title": "आजका धमाल महारथीहरू",
-    "weekly-summary-title": "हप्ताको धमाका सारांश",
-}
-
+            }
         };
 
         function changeLanguage() {
