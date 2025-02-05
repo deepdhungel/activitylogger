@@ -161,7 +161,7 @@
                         <option value="{{ username }}">{{ username }}</option>
                     {% endfor %}
                 </select><br><br>
-                <input type="text" id="new-username" name="new-username" placeholder="Enter new username"><br><br>
+                <input type="text" id="new-username" name="new-username" placeholder="Enter new username"><br>
 
                 <!-- Activity Dropdown -->
                 <label for="activity" id="activity-label">Activity:</label>
@@ -229,34 +229,7 @@
     </div>
 
     <script>
-        const languageData = {
-            en: {
-                "page-title": "Babbal Activity Competition",
-                "date-label": "Date:",
-                "username-label": "Username:",
-                "activity-label": "Activity:",
-                "minutes-label": "Minutes:",
-                "log-btn": "Log Activity",
-                "chart-title": "Steps Progression Per User",
-                "daily-performers-title": "Top Daily Performers",
-                "weekly-summary-title": "Weekly Summary",
-            }
-        };
-
-        function changeLanguage() {
-            const language = document.getElementById('language').value;
-            const labels = languageData[language];
-
-            document.getElementById('page-title').innerText = labels['page-title'];
-            document.getElementById('date-label').innerText = labels['date-label'];
-            document.getElementById('username-label').innerText = labels['username-label'];
-            document.getElementById('activity-label').innerText = labels['activity-label'];
-            document.getElementById('minutes-label').innerText = labels['minutes-label'];
-            document.getElementById('log-btn').innerText = labels['log-btn'];
-            document.getElementById('chart-title').innerText = labels['chart-title'];
-            document.getElementById('daily-performers-title').innerText = labels['daily-performers-title'];
-            document.getElementById('weekly-summary-title').innerText = labels['weekly-summary-title'];
-        }
+        
 
         // Function to toggle visibility of the new username input field
         function toggleNewUsernameField() {
